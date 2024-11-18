@@ -44,6 +44,27 @@ class Matrix extends Graph{
         return edges;
     }
 
+    HashSet<Edge> groups (){
+        HashSet<Edge> tGroups = new HashSet<>();
+        ArrayList<Vertex> notDone = new ArrayList<>(vertex);
+        ArrayList<Vertex> done = new ArrayList<>();
+
+        for(int i=0;i<matrix.size();i++){
+            ArrayList<Integer> row=matrix.get(i);
+            notDone.remove(vertex.get(i));
+            for(int j=0;j<row.size();j++){
+                notDone.remove(vertex.get(j));
+                if(row.get(j)==null && notDone.contains(vertex.get(j)))continue;
+                tGroups.add(new Edge(vertex.get(i), vertex.get(j), 0));
+            }
+        }
+        return tGroups;
+    }
+
+    @Override
+    public ArrayList<Vertex> getVertex() {
+        return vertex;
+    }
 
     void printGraph() {
         //System.out.println(vertexIndex);

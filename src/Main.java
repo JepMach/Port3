@@ -23,6 +23,7 @@ public class Main {
         g.visitDepthFirst(g.vertex("DATA"),visited);
         System.out.println(" ");
         System.out.println("Antal moduler: "+visited.size());
+        System.out.println(g.getVertex());
         //System.out.println(g.vertices());
         //System.out.println(visited);
     }

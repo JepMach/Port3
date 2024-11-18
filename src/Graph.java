@@ -1,11 +1,9 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 abstract class Graph{
     abstract void insertEdge(String v,String u,int w);
     abstract void printGraph();
+    abstract HashSet<Edge> groups();
     private HashMap<String,Vertex> vertex=new HashMap<>();
     public Vertex vertex(String s){
         if(!vertex.containsKey(s))vertex.put(s,new Vertex(s));
@@ -21,4 +19,6 @@ abstract class Graph{
         for(Edge e: outEdge(v))
             visitDepthFirst(e.to,visited);
     }
+    abstract ArrayList<Vertex> getVertex();
+
 }
