@@ -3,7 +3,10 @@ import java.util.*;
 abstract class Graph{
     abstract void insertEdge(String v,String u,int w);
     abstract void printGraph();
-    abstract HashSet<Edge> groups();
+    abstract void setUniqueGroupMatrix(HashSet<HashSet<Vertex>> groupMatrix);
+    abstract void setGroupMatrix2(HashSet<HashSet<Vertex>> groupMatrix);
+    abstract HashSet<HashSet<Vertex>> setGroupMatrix();
+
     private HashMap<String,Vertex> vertex=new HashMap<>();
     public Vertex vertex(String s){
         if(!vertex.containsKey(s))vertex.put(s,new Vertex(s));

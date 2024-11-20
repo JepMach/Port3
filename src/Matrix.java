@@ -2,6 +2,7 @@ import java.util.*;
 
 class Matrix extends Graph{
     ArrayList<ArrayList<Integer>> matrix=new ArrayList<>();
+
     ArrayList<Vertex> vertex=new ArrayList<>();
     HashMap<Vertex,Integer> vertexIndex=new HashMap<>();
     void insertEdge(String u,String v,int w){
@@ -17,12 +18,129 @@ class Matrix extends Graph{
         }
         setMatrix(vertexIndex.get(u1),vertexIndex.get(v1),w);
     }
+
     void setMatrix(int i,int j,int w){
         while(matrix.size()<=i)matrix.add(new ArrayList<Integer>());
         ArrayList<Integer> row=matrix.get(i);
         while(row.size()<=26)row.add(null);
         row.set(j,w);
     }
+    void setUniqueGroupMatrix(HashSet<HashSet<Vertex>> groupMatrix){
+        ArrayList<Vertex> done = new ArrayList<>();
+
+        for (int i=0; i<matrix.size();i++) {
+            Vertex currentV1 = vertex.get(i);
+            HashSet<Vertex> tGroup = new HashSet<>();
+
+            if (!done.contains(currentV1)) {
+                tGroup.add(currentV1);
+                done.add(currentV1);
+            }
+            for (int j = 0; j < matrix.size(); j++) {
+                Vertex currentV2 = vertex.get(j);
+                if (done.contains(currentV2)) continue;
+                if (tGroup.size() > 2) break;
+                HashSet<Vertex> v1Ver = new HashSet<>();
+                for (Vertex v : tGroup) {
+                    Collection<Edge> v1Edges = outEdge(v);
+                    v1Ver.add(v);
+                    for (Edge e : v1Edges) {
+                        v1Ver.add(e.to);
+                    }
+                }
+                if (!v1Ver.contains(currentV2)) {
+                    tGroup.add(currentV2);
+                    done.add(currentV2);
+                }
+            }
+
+            if (tGroup.isEmpty()) {
+                done.removeAll(tGroup);
+                continue;
+            }
+            groupMatrix.add(tGroup);
+        }
+
+    }
+    void setGroupMatrix2(HashSet<HashSet<Vertex>> groupMatrix){
+        ArrayList<Vertex> done = new ArrayList<>();
+
+        for (int i=0; i<matrix.size();i++) {
+            Vertex currentV1 = vertex.get(i);
+            HashSet<Vertex> tGroup = new HashSet<>();
+            tGroup.add(currentV1);
+
+            for (int j = 0; j < matrix.size(); j++) {
+                Vertex currentV2 = vertex.get(j);
+                if (tGroup.contains(currentV2))continue;
+
+                HashSet<Vertex> v1Ver = new HashSet<>();
+                for (Vertex v : tGroup) {
+                    Collection<Edge> v1Edges = outEdge(v);
+                    v1Ver.add(v);
+                    for (Edge e : v1Edges) {
+                        v1Ver.add(e.to);
+                    }
+                }
+                if (!v1Ver.contains(currentV2)) {
+                    tGroup.add(currentV2);
+                }
+            }
+            groupMatrix.add(tGroup);
+        }
+    }
+
+    HashSet<HashSet<Vertex>> setGroupMatrix(){
+        HashSet<HashSet<Vertex>> groupMatrix = new HashSet<>();
+        ArrayList<Vertex> done = new ArrayList<>();
+
+        for (int i=0; i<matrix.size();i++) {
+            Vertex currentV1 = vertex.get(i);
+            HashSet<Vertex> tGroup = new HashSet<>();
+            tGroup.add(currentV1);
+            done.add(currentV1);
+
+            for (int j = 0; j < matrix.size(); j++) {
+                Vertex currentV2 = vertex.get(j);
+                if (tGroup.contains(currentV2))continue;
+                if (done.contains(currentV2))continue;
+                HashSet<Vertex> v1Ver = new HashSet<>();
+                for (Vertex v : tGroup) {
+                    Collection<Edge> v1Edges = outEdge(v);
+                    v1Ver.add(v);
+                    for (Edge e : v1Edges) {
+                        v1Ver.add(e.to);
+                    }
+                }
+                if (!v1Ver.contains(currentV2)) {
+                    tGroup.add(currentV2);
+                    done.add(currentV2);
+
+                }
+            }
+            groupMatrix.add(tGroup);
+        }
+
+        HashSet<HashSet<Vertex>> removed = new HashSet<>();
+        for (HashSet<Vertex> g: groupMatrix){
+            for (HashSet<Vertex> g2 : groupMatrix) {
+                if (g==g2)continue;
+                if (!g.containsAll(g2))continue;
+                removed.add(g2);
+            }
+        }
+        groupMatrix.removeAll(removed);
+        System.out.println(removed);
+
+        return groupMatrix;
+    }
+
+
+
+    /*
+
+     */
+
     Collection<Edge> edges(){
         HashSet<Edge> edges=new HashSet<>();
         for(int i=0;i<matrix.size();i++){
@@ -44,22 +162,7 @@ class Matrix extends Graph{
         return edges;
     }
 
-    HashSet<Edge> groups (){
-        HashSet<Edge> tGroups = new HashSet<>();
-        ArrayList<Vertex> notDone = new ArrayList<>(vertex);
-        ArrayList<Vertex> done = new ArrayList<>();
 
-        for(int i=0;i<matrix.size();i++){
-            ArrayList<Integer> row=matrix.get(i);
-            notDone.remove(vertex.get(i));
-            for(int j=0;j<row.size();j++){
-                notDone.remove(vertex.get(j));
-                if(row.get(j)==null && notDone.contains(vertex.get(j)))continue;
-                tGroups.add(new Edge(vertex.get(i), vertex.get(j), 0));
-            }
-        }
-        return tGroups;
-    }
 
     @Override
     public ArrayList<Vertex> getVertex() {
@@ -74,7 +177,8 @@ class Matrix extends Graph{
             StringBuilder verLength = new StringBuilder(vertex.get(i).toString());
             switch (verLength.length()){
                 case 2:
-                    verLength.append("  ");
+                    verLength.insert(0," ");
+                    verLength.append(" ");
                     break;
                 case 3:
                     verLength.append(" ");
