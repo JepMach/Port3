@@ -70,8 +70,102 @@ public class Main {
             System.out.println(group+" sum: "+studSum);
         }
 
+        Graph groupGraph = new Matrix();
 
-        System.out.println(minOverlapGroups(g.setGroupMatrix(),g));
+
+        System.out.println(" ");
+        System.out.println(" ");
+
+        int groupNr=1;
+        for (HashSet<Vertex> groupG:g.setGroupMatrix()){
+            int checkGroupNr=1;
+            HashSet<Edge> groupEdges = new HashSet<>();
+            for (Vertex v: groupG){
+                groupEdges.addAll(g.outEdge(v));
+            }
+            System.out.println("group " + groupNr);
+            for (HashSet<Vertex> gr:g.setGroupMatrix()){
+                int groupW=0;
+                HashSet<Edge> groupEdgesComp = new HashSet<>();
+                for (Vertex v2:gr){
+                    groupEdgesComp.addAll(g.outEdge(v2));
+                }
+                for (Edge e:groupEdges){
+                    for (Edge e2:groupEdgesComp){
+                        if (e.to==e2.from){
+                            groupW+=e.weight;
+                            break;
+                        }
+                    }
+                }
+                if (!(groupW ==0)) {
+                    System.out.println("group "+checkGroupNr+" -> "+groupW);
+                    groupGraph.insertEdge("Gr"+groupNr,"Gr"+checkGroupNr,groupW);
+                }
+                checkGroupNr++;
+            }
+            groupNr++;
+            System.out.println(" ");
+        }
+        System.out.println(" ");
+        System.out.println(" ");
+
+
+        groupGraph.printGraph();
+
+        System.out.println(" ");
+        System.out.println(" ");
+
+        for (Edge e:minOverlapGroups(groupGraph)){
+            System.out.println(e);
+        }
+        System.out.println(" ");
+        System.out.println(" ");
+
+        HashSet<HashSet<Vertex>> added = new HashSet<>();
+        HashSet<Vertex> spot = new HashSet<>();
+        HashSet<Vertex> checked = new HashSet<>();
+
+
+        for (Edge e:minOverlapGroups(groupGraph)){
+            if (!checked.contains(e.to)) {
+                spot.add(e.to);
+                checked.add(e.to);
+            }
+            if (!checked.contains(e.from)) {
+                spot.add(e.from);
+                checked.add(e.from);
+            }
+            if (spot.size()<3)continue;
+            added.add(new HashSet<>(spot));
+            spot.clear();
+        }
+
+
+        System.out.println(" ");
+        System.out.println(" ");
+
+        for (HashSet<Vertex> v:added){
+            System.out.print(v);
+            int studSum=0;
+            HashSet<Edge> checker = new HashSet<>();
+
+            for (Vertex v2:v){
+                checker.addAll(groupGraph.outEdge(v2));
+            }
+            HashSet<Edge> checker2 = new HashSet<>();
+            for (Edge e : checker) {
+                if (v.contains(e.to) && v.contains(e.from) && !checker2.contains(e)){
+                    studSum+=e.weight;
+                    checker2.add(e);
+                }
+            }
+            System.out.println(" studerende tilfældes: "+studSum/2);
+        }
+
+
+
+
 
         //System.out.println(g.outEdge(g.vertex("DATA")));
         //System.out.println(g.getVertex());
@@ -94,29 +188,17 @@ public class Main {
         return list;
     }
 
-    static Set<Edge> minOverlapGroups(HashSet<HashSet<Vertex>> groups, Graph graph){
+    static Set<Edge> minOverlapGroups(Graph graph){
 
-        HashSet<HashSet<Edge>> edges = new HashSet<>();
-
-        for (HashSet<Vertex> g:groups){
-            HashSet<Edge> groupEdges = new HashSet<>();
-            for (Vertex gV:g){
-                groupEdges.addAll(graph.outEdge(gV));
-            }
-            edges.add(groupEdges);
-        }
+        Collection<Edge> edges=graph.edges();
 
         HashSet<Edge> tGroups = new HashSet<>();
         HashSet<Vertex> visited = new HashSet<>();
 
         Vertex current =null;
 
-
-        for (HashSet<Edge> e:edges){
-            for (Edge e2:e){
-                current=
-                break;
-            }
+        for (Edge e:edges){
+            current=e.from;break;
         }
         while (true){
             Edge nearest=null;

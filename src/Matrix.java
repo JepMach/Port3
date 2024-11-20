@@ -22,7 +22,7 @@ class Matrix extends Graph{
     void setMatrix(int i,int j,int w){
         while(matrix.size()<=i)matrix.add(new ArrayList<Integer>());
         ArrayList<Integer> row=matrix.get(i);
-        while(row.size()<=26)row.add(null);
+        while(row.size()<= j)row.add(null);
         row.set(j,w);
     }
     void setUniqueGroupMatrix(HashSet<HashSet<Vertex>> groupMatrix){
@@ -130,7 +130,6 @@ class Matrix extends Graph{
             }
         }
         groupMatrix.removeAll(removed);
-        System.out.println(removed);
 
         return groupMatrix;
     }
